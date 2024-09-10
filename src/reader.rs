@@ -72,6 +72,8 @@ impl<T: Read + Sized> SiteMapReader<T> {
             self.url_item = structs::UrlEntry::new();
         } else if self.path == vec!["sitemapindex", "sitemap"] {
             self.sitemap_item = structs::SiteMapEntry::new();
+        } else if self.path == vec!["sitemapindex", "url", "sitemap"] {
+            self.sitemap_item = structs::SiteMapEntry::new();
         }
     }
     fn text_content(&mut self, data: String) {
@@ -85,6 +87,8 @@ impl<T: Read + Sized> SiteMapReader<T> {
             self.url_item.priority = structs::Priority::from(data);
         } else if self.path == vec!["sitemapindex", "sitemap", "loc"] {
             self.sitemap_item.loc = structs::Location::from(data);
+        } else if self.path == vec!["sitemapindex", "url", "sitemap", "loc"] {
+            self.sitemap_item.loc = structs::Location::from(data);
         } else if self.path == vec!["sitemapindex", "sitemap", "lastmod"] {
             self.sitemap_item.lastmod = structs::LastMod::from(data);
         }
@@ -93,6 +97,8 @@ impl<T: Read + Sized> SiteMapReader<T> {
         if self.path == vec!["urlset", "url"] {
             return Some(SiteMapEntity::Url(self.url_item.clone()));
         } else if self.path == vec!["sitemapindex", "sitemap"] {
+            return Some(SiteMapEntity::SiteMap(self.sitemap_item.clone()));
+        } else if self.path == vec!["sitemapindex", "url", "sitemap"] {
             return Some(SiteMapEntity::SiteMap(self.sitemap_item.clone()));
         }
         return None;
